@@ -1,0 +1,299 @@
+import random
+
+
+class Pet:
+    def __init__(self,n:str):
+        """Initializes Pet classes."""
+        self.name = n
+        self.fullness = 8
+        self.happiness = 8
+        self.cleanliness = 8
+        self.alive = True
+        self.stage = "egg"
+        self.progress = 1
+
+    def feed(self):
+        """feed, adds 3 to the pet’s fullness, up to a maximum of 10. If the pet’s fullness
+           is already 10 when this function is called, the pet spills food on itself, and its
+           cleanliness drops by 2 (to a minimum of 1)."""
+        #Check if fullness is below maximum
+        if self.fullness < 10:
+            #increase by 3 
+            self.fullness += 3
+            # If fullness is already at the maximum 10 cleanliness decreases
+        elif self.cleanliness -2 < 1:
+            # If reducing cleanliness by 2 makes it less than 1, set cleanliness to 1
+            self.cleanliness = 1
+            #otherwise decrease cleanliness by 2
+        else:
+            self.cleanliness -= 2
+
+    def play(self):
+        """play, adds 3 to the pet’s happiness, up to a maximum of 10. If the pet’s happiness
+           is already 10 when this function is called, the pet gets hungrier from exercise,
+           and its fullness drops by 2 (to a minimum of 1)."""
+        #check if happiness is below maximum
+        if self.happiness < 10:
+            #increase by 3 
+            self.happiness += 3
+            #if happiness is already at maxumum 10 fullness decreases
+        elif self.fullness -2 < 1:
+            #if reducing fullness by 2 makes it less than 1 set it to 1 
+            self.fullness = 1
+            #otherwise decrease fullness by 2 
+        else:
+            self.fullness -= 2
+
+
+    def bathe(self):
+        """bathe, adds 3 to the pet’s cleanliness, up to a maximum of 10. If the pet’s cleanliness
+           is already 10 when this function is called, the pet gets annoyed by unnecessary bathing,
+           and its happiness drops by 2 (to a minimum of 1)."""
+        #check if cleanliness is below maximum
+        if self.cleanliness < 10:
+            #increase by 3
+            self.cleanliness += 3
+            # if cleanliness is already maximum 10 happiness drops
+        elif self.happiness -2 < 1:
+            #if reducing happiness by 2 makes it less than 1 set it to 1
+            self.happiness = 1
+            # Otherwise decrease happiness by 2
+        else:
+            self.happiness -=2
+
+
+    def age_up(self):
+        """age up, changes the value of stage to the next stage,
+           and resets progress to 1."""
+        
+        stages = [ "egg", "baby", "child", "adult"]
+        #if pet is not at last stage then add 1 
+        if self.stage != "adult":
+           self.stage = stages[stages.index(self.stage)+ 1]
+           #if pet is already at last stage then do nothing
+        else:
+            self.stage = "adult"
+        
+        #Reset progress
+        self.progress = 1
+
+    def status(self):
+        """status, if fullness, happiness, and cleanliness are all greater than 5,
+           returns the string “fine”. If fullness, happiness, or cleanliness is 1,
+           returns the string “dead” and changes the value of alive to False. If fullness,
+           happiness, or cleanliness is less than or equal to 5 (but the pet isn’t dead),
+           returns the string “distress”."""
+        #check if pet is dead using if and elif, return dead if fullness, happiness adn cleanliness is equal to 1 
+        if self.fullness == 1:
+            self.alive = False
+            return "dead"
+        if self.happiness == 1:
+            self.alive = False
+            return "dead"
+        if self.cleanliness == 1:
+            self.alive = False
+            return "dead"
+        #return fine if greater than fine 
+        elif self.fullness > 5 and self.happiness > 5 and self.cleanliness > 5:
+            return "fine"
+        #return distress if greater than or equal to 5 
+        else:
+            return "distress"
+
+
+
+    def time_step(self):
+        """randomly chooses one of fullness, happiness, and cleanliness to decrease by 1.
+        Increases progress by 1. After the increase, if the progress is 20, calls the
+        function age up. Calls the function status, and returns the string re- turned
+        by status."""
+
+        randomised_choice = random.choice(["fullness", "happiness", "cleanliness"])
+        #decrease choice by 1 based on randomised choice
+        if randomised_choice == "fullness" and self.fullness > 1:
+            self.fullness -= 1
+        elif randomised_choice == "happiness" and self.happiness > 1:
+            self.happiness -= 1
+        elif randomised_choice == "cleanliness" and self.cleanliness > 1:
+            self.cleanliness -= 1
+        #Increase progress by 1
+        self.progress += 1
+        #if progress reaches 20 then call age_up
+        if self.progress == 20:
+            self.age_up()
+        #call status function and return what it says
+        return self.status()
+
+import turtle
+import time
+
+def fill_circle(turtle, color, radius, position):
+    turtle.up()
+    turtle.goto(position)
+    turtle.down()
+    turtle.fillcolor(color)
+    turtle.begin_fill()
+    turtle.circle(radius)
+    turtle.end_fill()
+    turtle.up()
+    turtle.goto(0,0)
+        
+        
+class TamagotchiGame:
+    def __init__(self, name: str):
+        """Creates a Tamagotchi Pet with the given name"""
+        turtle.tracer(0,0)
+        self.pet = Pet(name)
+        self.pen = turtle.Turtle()
+        self.pen.up()
+        self.pen.hideturtle()
+
+    def draw_egg(self):
+        fill_circle(self.pen, "PeachPuff", 20, (0,0))
+        fill_circle(self.pen, "white", 5, (10,20))
+        fill_circle(self.pen, "white", 5, (-10,20))
+        fill_circle(self.pen, "black", 2, (10,22))
+        fill_circle(self.pen, "black", 2, (-10,22))
+        turtle.update()
+
+    def draw_baby(self):
+        fill_circle(self.pen, "tomato", 10, (15,0))
+        fill_circle(self.pen, "tomato", 10, (-15,0))
+        fill_circle(self.pen, "tomato", 30, (0,0))
+        fill_circle(self.pen, "white", 8, (15,30))
+        fill_circle(self.pen, "white", 8, (-15,30))
+        fill_circle(self.pen, "black", 4, (15,34))
+        fill_circle(self.pen, "black", 4, (-15,34))
+        turtle.update()
+
+    def draw_child(self):
+        fill_circle(self.pen, "PowderBlue", 14, (20,0))
+        fill_circle(self.pen, "PowderBlue", 14, (-20,0))
+        fill_circle(self.pen, "PowderBlue", 10, (40,40))
+        fill_circle(self.pen, "PowderBlue", 10, (-40,40))
+        fill_circle(self.pen, "PowderBlue", 40, (0,0))
+        fill_circle(self.pen, "white", 10, (15,40))
+        fill_circle(self.pen, "white", 10, (-15,40))
+        fill_circle(self.pen, "black", 5, (15,44))
+        fill_circle(self.pen, "black", 5, (-15,44))
+        turtle.update()
+
+    def draw_adult(self):
+        fill_circle(self.pen, "thistle", 18, (25,0))
+        fill_circle(self.pen, "thistle", 18, (-25,0))
+        fill_circle(self.pen, "thistle", 12, (50,50))
+        fill_circle(self.pen, "thistle", 12, (-50,50))
+        fill_circle(self.pen, "thistle", 50, (0,0))
+        fill_circle(self.pen, "purple", 5, (0,35))
+        fill_circle(self.pen, "white", 12, (15,50))
+        fill_circle(self.pen, "white", 12, (-15,50))
+        fill_circle(self.pen, "black", 6, (15,55))
+        fill_circle(self.pen, "black", 6, (-15,55))
+        turtle.update()
+
+    def draw_tombstone(self):
+        self.pen.fillcolor("burlywood")
+        self.pen.begin_fill()
+        self.pen.forward(50)
+        for i in range(2):
+            self.pen.left(90)
+            self.pen.forward(200)
+            self.pen.left(90)
+            self.pen.forward(100)
+        self.pen.end_fill()
+        self.pen.up()
+        self.pen.goto(0,160)
+        self.pen.write("RIP", align = "center", font=("Arial", 20, "normal"))
+        self.pen.goto(0,140)
+        self.pen.write(self.pet.name, align = "center", font=("Arial", 15, "normal"))
+        self.pen.goto(0,120)
+        self.pen.write("you were the best <3", align = "center", font=("Arial", 9, "normal"))
+        self.pen.goto(0,0)
+        turtle.update()
+
+    def display(self):
+        self.pen.clear()
+        self.pen.up()
+        self.pen.goto(0,-30)
+        self.pen.write(self.pet.name, align = "center", font=("Arial", 20, "normal"))
+        turtle.update()
+        self.pen.goto(0,0)
+        if self.pet.stage == "egg":
+            self.draw_egg()
+        elif self.pet.stage == "baby":
+            self.draw_baby()
+        elif self.pet.stage == "child":
+            self.draw_child()
+        else:
+            self.draw_adult()
+        if self.pet.status() == "distress":
+            self.pen.goto(0,120)
+            self.pen.write("*crying*", align = "center", font=("Arial", 30, "normal"))
+            self.pen.goto(0,0)
+            turtle.update()
+
+    def feed(self):
+        self.pet.feed()
+        self.display()
+        self.pen.goto(0,90)
+        self.pen.write("~nom-nom-nom~", align = "center", font=("Arial", 30, "normal"))
+        turtle.update()
+        self.pen.goto(0,0)
+        time.sleep(2)
+        self.display()
+
+    def play(self):
+        self.pet.play()
+        self.display()
+        self.pen.goto(0,90)
+        self.pen.write("~weeee~", align = "center", font=("Arial", 30, "normal"))
+        turtle.update()
+        self.pen.goto(0,0)
+        time.sleep(2)
+        self.display()
+
+    def bathe(self):
+        self.pet.bathe()
+        self.display()
+        self.pen.goto(0,90)
+        self.pen.write("~scrub-a-dub~", align = "center", font=("Arial", 30, "normal"))
+        turtle.update()
+        self.pen.goto(0,0)
+        time.sleep(2)
+        self.display()
+        
+
+    def run(self) -> None:
+        """Runs the Tamagotchi game"""
+        self.display()
+        time.sleep(2)
+        state = self.pet.time_step()
+        while state != "dead":
+            self.display()
+            self.pen.goto(0,-50)
+            self.pen.write("Type 1 to feed, 2 to play, 3 to bathe", align = "center", font=("Arial", 15, "normal"))
+            turtle.update()
+            self.pen.goto(0,0)
+            turtle.listen()
+            turtle.onkey(self.feed, "1")
+            turtle.onkey(self.play, "2")
+            turtle.onkey(self.bathe, "3")
+            time.sleep(1)
+            state = self.pet.time_step()
+        self.pen.clear()
+        self.draw_tombstone()
+        turtle.exitonclick()
+
+    def play_tamagotchi(self):
+        """Prompts the user to name their Tamagotchi
+        pet and starts the game."""
+        #Prompt user to enter a name for their pet
+        pet_name = input("What would you like to name your pet?: ")
+        #Create an instance of Tamgotchi Gane With the given name
+        game = TamagotchiGame(pet_name)
+        game.run()
+
+#Lea helped me with this bit <3
+lets_play = TamagotchiGame("pet_name")
+lets_play.play_tamagotchi()
+                         
